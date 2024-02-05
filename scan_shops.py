@@ -1,4 +1,5 @@
 import json
+import time
 
 from dataclasses import asdict
 from selene import browser
@@ -81,7 +82,7 @@ config_browser(gui=True)
 # ]
 selected_categories = [category.tea_coffee]
 
-current_products = []
+current_products = {}
 
 for shop_code, shop_info in shop_codes.items():
     logger.info('-' * 92)
@@ -92,9 +93,11 @@ for shop_code, shop_info in shop_codes.items():
         logger.warning(f"Каталог({_category}) - {category_name.get(str(_category))}")
         products = catalog.get_category_products_with_bs(shop_code, _category)
 
-        current_products.extend(products)
+        current_products.update(products)
 
 browser.quit()
 
-with open(f"products_history.json", 'w', encoding='utf-8') as file:
-    json.dump(_shop_products, file, ensure_ascii=False)
+with open(f"current_products.json", 'w', encoding='utf-8') as file:
+    json.dump(current_products, file, ensure_ascii=False)
+
+time.sleep(1)

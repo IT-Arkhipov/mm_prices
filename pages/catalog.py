@@ -44,7 +44,7 @@ def get_category_products_with_bs(shop: str, category: str) -> dict:
         html_page = browser.driver.page_source
         soup = BeautifulSoup(html_page, 'lxml')
 
-        time.sleep(random.random() * 5 + 1)
+        # time.sleep(random.random() * 5 + 1)
         products_grid = soup.find('div', class_=catalog_items_list.lstrip('.'))
 
         page_products = products_grid.find_all('div', id=True)
@@ -66,7 +66,8 @@ def get_category_products_with_bs(shop: str, category: str) -> dict:
                 continue
 
             try:
-                product[_id].update({'price': page_product.find('div', class_=item_price.lstrip('.')).text.split()[0]})
+                price = round(float(page_product.find('div', class_=item_price.lstrip('.')).text.split()[0]), 0)
+                product[_id].update({'price': price})
             except AttributeError:
                 logger.error(f"Ошибка импорта продукта '{_id}' при получении цены")
                 continue
