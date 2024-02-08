@@ -41,10 +41,13 @@ def get_category_products_with_bs(shop: str, category: str) -> dict:
         if browser.element(geolocation_close_btn).with_(timeout=1).wait_until(be.clickable):
             browser.element(geolocation_close_btn).click()
 
+        if not browser.element(catalog_items_list).with_(timeout=1).wait_until(be.visible):
+            browser.driver.refresh()
+
         html_page = browser.driver.page_source
         soup = BeautifulSoup(html_page, 'lxml')
 
-        # time.sleep(random.random() * 5 + 1)
+        time.sleep(random.random() * 5 + 2)
         products_grid = soup.find('div', class_=catalog_items_list.lstrip('.'))
 
         page_products = products_grid.find_all('div', id=True)

@@ -17,7 +17,7 @@ from utils.config import logger
 
 def config_browser(gui: bool = True):
     browser.config.base_url = 'https://megamarket.ru/'
-    browser.config.timeout = 3
+    browser.config.timeout = 10
 
     if gui:
         browser.config.driver.maximize_window()
@@ -72,15 +72,15 @@ config_browser(gui=True)
 # hygiene: Гигиена
 # chemicals: Бытовая химия
 
-# selected_categories = []
-# for value in asdict(category).values():
-#     selected_categories.append(value)
+selected_categories = []
+for value in asdict(category).values():
+    selected_categories.append(value)
 
 # selected_categories = [
 #     category.cheese, category.milk_egg, category.meat_poultry, category.sausages, category.grocery_souses,
 #     category.conservation, category.frozen, category.drinks,
 # ]
-selected_categories = [category.tea_coffee]
+# selected_categories = [category.tea_coffee]
 
 current_products = {}
 
