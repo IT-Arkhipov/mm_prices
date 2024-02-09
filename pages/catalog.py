@@ -41,7 +41,8 @@ def get_category_products_with_bs(shop: str, category: str) -> dict:
         if browser.element(geolocation_close_btn).with_(timeout=1).wait_until(be.clickable):
             browser.element(geolocation_close_btn).click()
         time.sleep(random.random() * 3 + 1)
-
+        logger.info('-' * 92)
+        logger.info(f"page - {page_number}")
         page_products = None
         if browser.element(catalog_items_list).wait_until(be.visible):
             html_page = browser.driver.page_source

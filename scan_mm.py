@@ -26,6 +26,8 @@ def config_browser(gui: bool = True):
         chrome_options.add_argument("--start-maximized")
         chrome_options.add_argument("--disable-extensions")
         chrome_options.add_argument("--disable-popup-blocking")
+        chrome_options.add_argument(
+            "user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3")
         chrome_options.add_experimental_option("prefs", {
             "profile.default_content_setting_values.notifications": 2
         })
@@ -46,6 +48,15 @@ def config_browser(gui: bool = True):
         options.add_argument("--disable-gpu")
         options.add_argument("--window-size=1920,1080")
         options.add_argument("--no-sandbox")
+        options.add_argument("--disable-blink-features=AutomationControlled")
+        options.add_argument("--no-sandbox")
+        options.add_argument("user-agent=#{linux_useragent}")
+        options.add_argument("--disable-web-security")
+        options.add_argument("--disable-xss-auditor")
+        options.add_argument(
+            "user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3")
+        options.add_experimental_option("excludeSwitches", ["enable-automation", "load-extension"])
+
         options.add_experimental_option("prefs", {
             "profile.default_content_setting_values.notifications": 2
         })
