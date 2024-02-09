@@ -60,6 +60,8 @@ logger.warning('Конфигурирование браузера')
 config_browser(gui=True)
 # config_browser(gui=False)
 
+main_page.open_page()
+
 # milk_egg: Молочные продукты, яйцо
 # cheese: Сыры
 # grocery_souses: Бакалея, соусы

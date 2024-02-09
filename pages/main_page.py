@@ -25,7 +25,20 @@ from utils import config
 
 region_close_btn = '.header-user-address-combined-selector .close-button'
 geolocation_close_btn = 'button.js-close'
-
+sber_id_dlg = '.onboarding__step'
+sber_id_btn = '.onboarding__step .c-button'
+cookie_btn = '.cookie__button'
+user_address_close = '.header-user-address__selector .close-button'
+set_address_btn = '..header-region-selector-view__footer-cancel'
+user_address_menu = '.header-user-address'
+address_menu_btn = '.header-user-address-button__content'
+user_address_selector = '.header-user-address__selector'
+user_address_btn = '.header-region-selector-view__address-block-button'
+address_search_input = '.profile-address-create__search input'
+city_address = 'Новочебоксарск, Первомайская, 27'
+address_suggestions = '.search-form-suggestions'
+suggestion_item = '.search-form-suggestions__item'
+confirm_address_btn = '.profile-address-create__search-btn'
 
 def init_browser(gui: bool = True):
     browser.config.base_url = 'https://megamarket.ru'
@@ -57,7 +70,37 @@ def init_browser(gui: bool = True):
 
 
 def open_page():
-    browser.open('/')
+    browser.open('https://megamarket.ru/catalog/cnc/#?store=333642')
+
+    # if browser.element(geolocation_close_btn).with_(timeout=1).wait_until(be.clickable):
+    #     browser.element(geolocation_close_btn).click()
+
+    if browser.element(sber_id_dlg).with_(timeout=1).wait_until(be.clickable):
+        browser.element(sber_id_btn).click()
+
+    if browser.element(cookie_btn).with_(timeout=1).wait_until(be.clickable):
+        browser.element(cookie_btn).click()
+
+    if browser.element(user_address_selector).with_(timeout=1).wait_until(be.clickable):
+        browser.element(user_address_close).click()
+
+    if browser.element(user_address_selector).with_(timeout=1).wait_until(be.clickable):
+        browser.element(user_address_btn).click()
+    else:
+        browser.element(user_address_menu).click()
+        browser.element(user_address_btn).click()
+
+    if browser.element(address_search_input).with_(timeout=1).wait_until(be.clickable):
+        browser.element(address_search_input).type(city_address)
+
+    if browser.element(address_suggestions).with_(timeout=1).wait_until(be.clickable):
+        browser.all(suggestion_item)[0].click()
+
+    if browser.element(confirm_address_btn).with_(timeout=1).wait_until(be.clickable):
+        browser.element(confirm_address_btn).click()
+
+    if browser.element(user_address_selector).with_(timeout=1).wait_until(be.clickable):
+        browser.element(user_address_close).click()
 
 
 def open_category_shop_page(category: str, shop: str):

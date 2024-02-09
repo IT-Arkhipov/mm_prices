@@ -80,10 +80,10 @@ for catalog in catalog_name.keys():
         while counter < 3:
             counter += 1
             response = requests.request('POST', url, json=payload, headers=headers, params=querystring)
-        if not response.ok:
-            logger.error(response.status_code)
-            print(response.status_code)
-            continue
+            if not response.ok:
+                logger.error(response.status_code)
+                print(response.status_code)
+                continue
 
         if not response.ok:
             logger.error(response.text)

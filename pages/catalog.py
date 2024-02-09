@@ -28,10 +28,10 @@ def get_category_products_with_bs(shop: str, category: str) -> dict:
     category_url = f'https://megamarket.ru/catalog/cnc/#?cat={category}&store={shop}'
     browser.open(category_url)
 
-    if browser.element(region_close_btn).wait_until(be.clickable):
+    if browser.element(region_close_btn).with_(timeout=1).wait_until(be.clickable):
         browser.element(region_close_btn).click()
 
-    if browser.element(geolocation_close_btn).wait_until(be.clickable):
+    if browser.element(geolocation_close_btn).with_(timeout=1).wait_until(be.clickable):
         browser.element(geolocation_close_btn).click()
 
     category_products = {}
@@ -40,49 +40,47 @@ def get_category_products_with_bs(shop: str, category: str) -> dict:
     while True:
         if browser.element(geolocation_close_btn).with_(timeout=1).wait_until(be.clickable):
             browser.element(geolocation_close_btn).click()
+        time.sleep(random.random() * 3 + 1)
 
-        if not browser.element(catalog_items_list).with_(timeout=1).wait_until(be.visible):
-            browser.driver.refresh()
+        page_products = None
+        if browser.element(catalog_items_list).wait_until(be.visible):
+            html_page = browser.driver.page_source
+            soup = BeautifulSoup(html_page, 'lxml')
+            products_grid = soup.find('div', class_=catalog_items_list.lstrip('.'))
+            page_products = products_grid.find_all('div', id=True)
 
-        html_page = browser.driver.page_source
-        soup = BeautifulSoup(html_page, 'lxml')
+        if page_products:
+            for page_product in page_products:
+                product = {}
+                try:
+                    _id = f"{shop}-{page_product.get('id')}"
+                    # _id = page_product.get(query.attribute('id'))
+                    product.update({_id: {}})
+                except AttributeError:
+                    logger.error(f"Ошибка импорта продукта при получении идентификатора")
+                    continue
 
-        time.sleep(random.random() * 5 + 2)
-        products_grid = soup.find('div', class_=catalog_items_list.lstrip('.'))
+                try:
+                    product[_id].update({'title': page_product.find('div', class_=item_title.lstrip('.')).text.strip(' \t\n')})
+                except AttributeError:
+                    logger.error(f"Ошибка импорта продукта '{_id}' при получении наименования")
+                    continue
 
-        page_products = products_grid.find_all('div', id=True)
+                try:
+                    price = round(float(page_product.find('div', class_=item_price.lstrip('.')).text.split()[0]), 0)
+                    product[_id].update({'price': price})
+                except AttributeError:
+                    logger.error(f"Ошибка импорта продукта '{_id}' при получении цены")
+                    continue
 
-        for page_product in page_products:
-            product = {}
-            try:
-                _id = f"{shop}-{page_product.get('id')}"
-                # _id = page_product.get(query.attribute('id'))
-                product.update({_id: {}})
-            except AttributeError:
-                logger.error(f"Ошибка импорта продукта при получении идентификатора")
-                continue
-
-            try:
-                product[_id].update({'title': page_product.find('div', class_=item_title.lstrip('.')).text.strip(' \t\n')})
-            except AttributeError:
-                logger.error(f"Ошибка импорта продукта '{_id}' при получении наименования")
-                continue
-
-            try:
-                price = round(float(page_product.find('div', class_=item_price.lstrip('.')).text.split()[0]), 0)
-                product[_id].update({'price': price})
-            except AttributeError:
-                logger.error(f"Ошибка импорта продукта '{_id}' при получении цены")
-                continue
-
-            product[_id].update({'sale_badge': isinstance(page_product.find('div', class_=discount_badge.lstrip('.')), Tag)})
-            logger.info(f"{_id}: {product[_id].get('title')}")
-            product[_id].update({
-                'shop': shop,
-                'category': category,
-                'price_history': {datetime.today().strftime('%Y-%m-%d'): product[_id].get('price')}
-            })
-            category_products.update(product)
+                product[_id].update({'sale_badge': isinstance(page_product.find('div', class_=discount_badge.lstrip('.')), Tag)})
+                logger.info(f"{_id}: {product[_id].get('title')}")
+                product[_id].update({
+                    'shop': shop,
+                    'category': category,
+                    'price_history': {datetime.today().strftime('%Y-%m-%d'): product[_id].get('price')}
+                })
+                category_products.update(product)
 
         if browser.element(next_page_btn).with_(timeout=1).wait_until(be.visible):
             # browser.element(next_page_btn).click()
