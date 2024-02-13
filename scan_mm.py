@@ -2,16 +2,14 @@ import json
 import time
 
 from dataclasses import asdict
+from random import random
+
 from selene import browser
 from selenium import webdriver
 
 from pages import main_page, catalog
-from pages.main_page import open_category_shop_page
-from products.declaration import category, shop_codes, shop_products, category_name
+from products.declaration import category, shop_codes, category_name
 
-# from pages import main_page, catalog
-# from pages.cookies import shop_cookies
-# from products.declaration import category, shop_products, shop_name, category_name
 from utils.config import logger
 
 
@@ -27,7 +25,7 @@ def config_browser(gui: bool = True):
         chrome_options.add_argument("--disable-extensions")
         chrome_options.add_argument("--disable-popup-blocking")
         chrome_options.add_argument(
-            "user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3")
+            "user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3")  # noqa: E501
         chrome_options.add_experimental_option("prefs", {
             "profile.default_content_setting_values.notifications": 2
         })
@@ -54,7 +52,7 @@ def config_browser(gui: bool = True):
         options.add_argument("--disable-web-security")
         options.add_argument("--disable-xss-auditor")
         options.add_argument(
-            "user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3")
+            "user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3")  # noqa: E501
         options.add_experimental_option("excludeSwitches", ["enable-automation", "load-extension"])
 
         options.add_experimental_option("prefs", {
@@ -103,10 +101,11 @@ for shop_code, shop_info in shop_codes.items():
 
     for _category in selected_categories:
         logger.info('-' * 92)
-        logger.warning(f"Каталог({_category}) - {category_name.get(str(_category))}")
+        logger.warning(f"{shop_codes.get(shop_code).get('brand')}. Каталог({_category}) - {category_name.get(str(_category))}")  # noqa: E501
         products = catalog.get_category_products_with_bs(shop_code, _category)
 
         current_products.update(products)
+        time.sleep(random() * 3 + 1)
 
 browser.quit()
 

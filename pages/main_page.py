@@ -40,6 +40,7 @@ address_suggestions = '.search-form-suggestions'
 suggestion_item = '.search-form-suggestions__item'
 confirm_address_btn = '.profile-address-create__search-btn'
 
+
 def init_browser(gui: bool = True):
     browser.config.base_url = 'https://megamarket.ru'
     browser.config.timeout = 10
@@ -71,35 +72,37 @@ def init_browser(gui: bool = True):
 
 def open_page():
     browser.open('https://megamarket.ru/catalog/cnc/#?store=333642')
+    
+    waiting = 2
 
     # if browser.element(geolocation_close_btn).with_(timeout=1).wait_until(be.clickable):
     #     browser.element(geolocation_close_btn).click()
 
-    if browser.element(sber_id_dlg).with_(timeout=1).wait_until(be.clickable):
+    if browser.element(sber_id_dlg).with_(timeout=waiting).wait_until(be.clickable):
         browser.element(sber_id_btn).click()
 
-    if browser.element(cookie_btn).with_(timeout=1).wait_until(be.clickable):
+    if browser.element(cookie_btn).with_(timeout=waiting).wait_until(be.clickable):
         browser.element(cookie_btn).click()
 
-    if browser.element(user_address_selector).with_(timeout=1).wait_until(be.clickable):
+    if browser.element(user_address_selector).with_(timeout=waiting).wait_until(be.clickable):
         browser.element(user_address_close).click()
 
-    if browser.element(user_address_selector).with_(timeout=1).wait_until(be.clickable):
+    if browser.element(user_address_selector).with_(timeout=waiting).wait_until(be.clickable):
         browser.element(user_address_btn).click()
     else:
         browser.element(user_address_menu).click()
         browser.element(user_address_btn).click()
 
-    if browser.element(address_search_input).with_(timeout=1).wait_until(be.clickable):
+    if browser.element(address_search_input).with_(timeout=waiting).wait_until(be.clickable):
         browser.element(address_search_input).type(city_address)
 
-    if browser.element(address_suggestions).with_(timeout=1).wait_until(be.clickable):
+    if browser.element(address_suggestions).with_(timeout=waiting).wait_until(be.clickable):
         browser.all(suggestion_item)[0].click()
 
-    if browser.element(confirm_address_btn).with_(timeout=1).wait_until(be.clickable):
+    if browser.element(confirm_address_btn).with_(timeout=waiting).wait_until(be.clickable):
         browser.element(confirm_address_btn).click()
 
-    if browser.element(user_address_selector).with_(timeout=1).wait_until(be.clickable):
+    if browser.element(user_address_selector).with_(timeout=waiting).wait_until(be.clickable):
         browser.element(user_address_close).click()
 
 

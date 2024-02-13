@@ -13,25 +13,27 @@ with open('shop_smart.json', 'r', encoding='utf-8') as f:
 for product, product_data in current_products.items():
     try:
         # обновление истории цены товара из файла с товарами на последнюю дату
-        products_history[product]['price_history'].update(product_data['price_history'])
+        price_history = products_history[product]['price_history']
+        price_history.update(product_data['price_history'])
 
         # сортировка дат в истории цены
-        sorted_dates = sorted(products_history[product]['price_history'].keys())
-        products_history[product]['price_history'] = \
-            {date: products_history[product]['price_history'][date] for date in sorted_dates}
+        sorted_dates = sorted(price_history.keys())
+        price_history = \
+            {date: price_history[date] for date in sorted_dates}
 
-        prices_sum = sum(products_history[product]['price_history'].values())
-        avg_price = curr_price = list(products_history[product]['price_history'].values())[
-            len(products_history[product]['price_history']) - 1]
-        if len(products_history[product]['price_history']) > 1:
-            avg_price = prices_sum / len(products_history[product]['price_history'])
+        prices_sum = sum(price_history.values())
+        avg_price = curr_price = list(price_history.values())[len(price_history) - 1]
+        if len(price_history) > 1:
+            avg_price = prices_sum / len(price_history)
         discount = round(((avg_price - curr_price) / avg_price) * 100)
+        products_history[product]['price'] = curr_price
         products_history[product]['discount'] = discount
         if discount > 0:
             p = products_history[product]
-            print(f"{p.get('title')} ({p.get('discount')}%)- {p.get('price')}")
+            print(f"{p.get('title')} ({p.get('discount')}%)- {p.get('price')} руб.: "
+                  f"{[price for date, price in p.get('price_history').items()]}")
     except KeyError:
         continue
 
-with open(f"shop_smart_history.json", 'w', encoding='utf-8') as file:
+with open(f"products/catalog/shop_smart_history.json", 'w', encoding='utf-8') as file:
     json.dump(products_history, file, ensure_ascii=False)
