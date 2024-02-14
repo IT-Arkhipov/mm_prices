@@ -1,3 +1,4 @@
+import uuid
 from datetime import datetime
 import json
 import time
@@ -27,7 +28,7 @@ discount_badge = '.discount-percentage'
 def get_category_products_with_bs(shop: str, category: str) -> dict:
     category_url = f'https://megamarket.ru/catalog/cnc/#?cat={category}&store={shop}'
     browser.open(category_url)
-
+    # browser.config.driver.save_screenshot(f"{datetime.now().strftime('%H_%M_%S')}.jpg")
     if browser.element(region_close_btn).with_(timeout=1).wait_until(be.clickable):
         browser.element(region_close_btn).click()
 

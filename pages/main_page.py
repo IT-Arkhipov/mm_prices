@@ -1,4 +1,5 @@
 import time
+from datetime import datetime
 
 from selenium import webdriver
 from selene import browser, be, query
@@ -72,7 +73,7 @@ def init_browser(gui: bool = True):
 
 def open_page():
     browser.open('https://megamarket.ru/catalog/cnc/#?store=333642')
-    
+    # browser.config.driver.save_screenshot(f"{datetime.now().strftime('%H_%M_%S')}.jpg")
     waiting = 2
 
     # if browser.element(geolocation_close_btn).with_(timeout=1).wait_until(be.clickable):
@@ -89,7 +90,7 @@ def open_page():
 
     if browser.element(user_address_selector).with_(timeout=waiting).wait_until(be.clickable):
         browser.element(user_address_btn).click()
-    else:
+    elif browser.element(user_address_menu).with_(timeout=waiting).wait_until(be.clickable):
         browser.element(user_address_menu).click()
         browser.element(user_address_btn).click()
 
