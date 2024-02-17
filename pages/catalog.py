@@ -23,11 +23,16 @@ item_info = '.item-info'
 item_title = '.item-title'
 item_price = '.item-price'
 discount_badge = '.discount-percentage'
+not_found = '.not-found'
 
 
 def get_category_products_with_bs(shop: str, category: str) -> dict:
     category_url = f'https://megamarket.ru/catalog/cnc/#?cat={category}&store={shop}'
     browser.open(category_url)
+    if browser.element(not_found).with_(timeout=0.5).wait_until(be.visible):
+        browser.driver.refresh()
+        time.sleep(1)
+
     # browser.config.driver.save_screenshot(f"{datetime.now().strftime('%H_%M_%S')}.jpg")
     if browser.element(region_close_btn).with_(timeout=1).wait_until(be.clickable):
         browser.element(region_close_btn).click()

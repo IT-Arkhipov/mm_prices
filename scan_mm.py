@@ -97,7 +97,7 @@ current_products = {}
 
 for shop_code, shop_info in shop_codes.items():
     logger.info('-' * 92)
-    logger.warning(f"Магазин '{shop_codes.get(shop_code).get('brand')} - {shop_codes.get(shop_code).get('address')}'")
+    logger.warning(f"Магазин '{shop_info.get('brand')} - {shop_info.get('address')}'")
 
     for _category in selected_categories:
         logger.info('-' * 92)

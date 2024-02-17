@@ -2,8 +2,6 @@ from pprint import pprint
 
 from pages import main_page
 from utils import config
-from utils.magnit_shops import (shop_id_10286, shop_id_10286_address, shop_id_5989_address, shop_id_5989,
-                                shop_id_12566, shop_id_12566_address)
 
 
 class Cookies:
