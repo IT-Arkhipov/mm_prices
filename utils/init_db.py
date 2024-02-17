@@ -2,8 +2,29 @@ import os
 import sqlite3
 
 from products.declaration import shop_codes, category_name
+# from scan_smart import catalog_name
 from utils import project_folder
 from pathlib import Path
+
+
+catalog_name = {
+    'p175': 'Выпечка, хлеб, торты, печенье',
+    'p469': 'Замороженные продукты',
+    'p492': 'Колбасы, сосиски, мясные деликатесы',
+    'p9': 'Вода, напитки, пиво',
+    'p460': 'Консервация, варенье, мёд',
+    'p7': 'Конфеты, шоколад, сладости',
+    'p9990': 'Кофе, чай, сахар',
+    'p10': 'Красота и здоровье',
+    'p481': 'Макароны, крупы, масло, специи',
+    'p5': 'Молоко, сыр, яйца',
+    'p3': 'Мясо, птица',
+    'p493': 'Наши марки',
+    'p4': 'Рыба, морепродукты, икра',
+    'p141': 'Снеки',
+    'p190': 'Соусы, приправы',
+    'p6': 'Фрукты, овощи, ягоды, грибы, орехи',
+}
 
 
 db_file = 'product_prices.db'
@@ -26,6 +47,18 @@ DROP TABLE IF EXISTS shop_catalog
 ''')
 
 cursor.execute('''
+DROP TABLE IF EXISTS product
+''')
+
+cursor.execute('''
+DROP TABLE IF EXISTS product
+''')
+
+cursor.execute('''
+DROP TABLE IF EXISTS price_history
+''')
+
+cursor.execute('''
 CREATE TABLE shop (
     shop_id INTEGER PRIMARY KEY AUTOINCREMENT,
     code TEXT,
@@ -45,7 +78,7 @@ CREATE TABLE catalog (
     catalog_id INTEGER PRIMARY KEY AUTOINCREMENT,
     code TEXT,
     title TEXT
-)
+    )
 ''')
 
 for code, title in category_name.items():
@@ -61,7 +94,32 @@ CREATE TABLE shop_catalog (
     catalog_id TEXT,
     FOREIGN KEY (shop_id) REFERENCES shop(shop_id),
     FOREIGN KEY (catalog_id) REFERENCES catalog(catalog_id)
-)
+    )
+''')
+
+cursor.execute('''
+CREATE TABLE product (
+    product_id INTEGER PRIMARY KEY AUTOINCREMENT,
+    shop_catalog_id TEXT,
+    code TEXT,
+    title TEXT,
+    price FLOAT,
+    unit TEXT,
+    value FLOAT,
+    sale_badge BOOLEAN,
+    discount FLOAT,
+    FOREIGN KEY (shop_catalog_id) REFERENCES shop_catalog(shop_catalog_id)
+    )    
+''')
+
+cursor.execute('''
+CREATE TABLE price_history (
+    price_history_id INTEGER PRIMARY KEY AUTOINCREMENT,
+    product_id TEXT,
+    data TEXT,
+    price FLOAT,
+    FOREIGN KEY (product_id) REFERENCES product(product_id)
+    )    
 ''')
 
 db.commit()
@@ -81,6 +139,32 @@ for shop_id in shop_ids:
         INSERT INTO shop_catalog (shop_id, catalog_id)
         VALUES (?, ?)
         ''', (shop_id[0], catalog_id[0]))
+
+
+cursor.execute('''
+    INSERT INTO shop (code, brand, address)
+    VALUES ('108', 'Смарт', 'Новочебоксарск')
+''')
+cursor.execute('''
+SELECT shop_id FROM shop WHERE code = '108'
+''')
+shop_code = cursor.fetchone()
+
+for code, title in catalog_name.items():
+    cursor.execute('''
+        INSERT INTO catalog (code, title)
+        VALUES (?, ?)
+    ''', (code, title))
+
+    cursor.execute('''
+    SELECT catalog_id FROM catalog WHERE code = ?
+    ''', (code,))
+    catalog_code = cursor.fetchone()
+
+    cursor.execute('''
+    INSERT INTO shop_catalog (shop_id, catalog_id)
+    VALUES (?, ?)
+    ''', (shop_code[0], catalog_code[0]))
 
 db.commit()
 db.close()

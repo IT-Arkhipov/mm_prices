@@ -1,3 +1,5 @@
+import os
+import sqlite3
 from datetime import datetime
 import json
 import time
@@ -5,6 +7,7 @@ from random import random
 
 import requests
 
+from utils import project_folder
 from utils.config import logger
 
 url = "https://smart.swnn.ru/WS/hs/exchange/getItems/1/1/1"
@@ -59,6 +62,10 @@ catalog_name = {
 
 _shop_products = {}
 
+db_file = 'product_prices.db'
+db = sqlite3.connect(os.path.join(project_folder, db_file))
+cursor = db.cursor()
+
 for catalog in catalog_name.keys():
     logger.info('-' * 92)
     logger.warning(f"Каталог - {catalog_name.get(catalog)}")
@@ -112,11 +119,32 @@ for catalog in catalog_name.keys():
                 'price_history': {datetime.today().strftime('%Y-%m-%d'): _product[_id].get('price')}
             })
             _shop_products.update(_product)
+
+            db_product = _product[_id]
+
+            cursor.execute('''
+                SELECT shop_catalog_id
+                FROM shop_catalog
+                WHERE shop_id = (SELECT shop_id FROM shop WHERE code = ?)
+                AND catalog_id = (SELECT catalog_id FROM catalog WHERE code = ?)
+            ''', ('108', catalog))
+
+            shop_catalog_id = cursor.fetchone()
+
+            cursor.execute('''
+            INSERT INTO product (shop_catalog_id, code, title, price, unit, value, sale_badge, discount)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+            ''', (shop_catalog_id[0], _id, db_product.get('title'), db_product.get('price'),
+                  db_product.get('unit'), db_product.get('value'), db_product.get('sale_badge'),
+                  db_product.get('discount')))
+            db.commit()
             logger.info(f"{_product[_id]['title']} - {_product[_id]['price']}")
 
         time.sleep(random() * 5 + 2)
         page_number += 1
     time.sleep(random() * 6 + 3)
+
+db.close()
 
 with open(f"shop_smart.json", 'w', encoding='utf-8') as file:
     json.dump(_shop_products, file, ensure_ascii=False)
