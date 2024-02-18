@@ -35,5 +35,5 @@ for product, product_data in current_products.items():
     except KeyError:
         continue
 
-with open(f"products/catalog/shop_smart_history.json", 'w', encoding='utf-8') as file:
+with open(f"shop_smart_history.json", 'w', encoding='utf-8') as file:
     json.dump(products_history, file, ensure_ascii=False)
