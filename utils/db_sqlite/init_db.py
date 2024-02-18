@@ -60,8 +60,7 @@ DROP TABLE IF EXISTS price_history
 
 cursor.execute('''
 CREATE TABLE shop (
-    shop_id INTEGER PRIMARY KEY AUTOINCREMENT,
-    code TEXT,
+    shop_id TEXT PRIMARY KEY,
     brand TEXT,
     address TEXT
 )
@@ -69,21 +68,20 @@ CREATE TABLE shop (
 
 for shop_code, shop_info in shop_codes.items():
     cursor.execute('''
-        INSERT INTO shop (code, brand, address)
+        INSERT INTO shop (shop_id, brand, address)
         VALUES (?, ?, ?)
     ''', (shop_code, shop_info.get('brand'), shop_info.get('address')))
 
 cursor.execute('''
 CREATE TABLE catalog (
-    catalog_id INTEGER PRIMARY KEY AUTOINCREMENT,
-    code TEXT,
+    catalog_id TEXT PRIMARY KEY,
     title TEXT
     )
 ''')
 
 for code, title in category_name.items():
     cursor.execute('''
-        INSERT INTO catalog (code, title)
+        INSERT INTO catalog (catalog_id, title)
         VALUES (?, ?)
     ''', (code, title))
 
@@ -99,25 +97,25 @@ CREATE TABLE shop_catalog (
 
 cursor.execute('''
 CREATE TABLE product (
-    product_id INTEGER PRIMARY KEY AUTOINCREMENT,
+    product_id TEXT,
     shop_catalog_id TEXT,
-    code TEXT,
     title TEXT,
     price FLOAT,
     unit TEXT,
     value FLOAT,
     sale_badge BOOLEAN,
     discount FLOAT,
+    PRIMARY KEY (product_id, shop_catalog_id),
     FOREIGN KEY (shop_catalog_id) REFERENCES shop_catalog(shop_catalog_id)
     )    
 ''')
 
 cursor.execute('''
 CREATE TABLE price_history (
-    price_history_id INTEGER PRIMARY KEY AUTOINCREMENT,
+    price_date TEXT,
     product_id TEXT,
-    data TEXT,
     price FLOAT,
+    PRIMARY KEY (price_date, product_id),
     FOREIGN KEY (product_id) REFERENCES product(product_id)
     )    
 ''')
@@ -142,29 +140,30 @@ for shop_id in shop_ids:
 
 
 cursor.execute('''
-    INSERT INTO shop (code, brand, address)
+    INSERT INTO shop (shop_id, brand, address)
     VALUES ('108', 'Смарт', 'Новочебоксарск')
 ''')
-cursor.execute('''
-SELECT shop_id FROM shop WHERE code = '108'
-''')
-shop_code = cursor.fetchone()
+
+# cursor.execute('''
+# SELECT shop_id FROM shop WHERE shop_id = '108'
+# ''')
+# shop_code = cursor.fetchone()
 
 for code, title in catalog_name.items():
     cursor.execute('''
-        INSERT INTO catalog (code, title)
+        INSERT INTO catalog (catalog_id, title)
         VALUES (?, ?)
     ''', (code, title))
 
-    cursor.execute('''
-    SELECT catalog_id FROM catalog WHERE code = ?
-    ''', (code,))
-    catalog_code = cursor.fetchone()
+    # cursor.execute('''
+    # SELECT catalog_id FROM catalog WHERE catalog_id = ?
+    # ''', (code,))
+    # catalog_code = cursor.fetchone()
 
     cursor.execute('''
     INSERT INTO shop_catalog (shop_id, catalog_id)
     VALUES (?, ?)
-    ''', (shop_code[0], catalog_code[0]))
+    ''', ('108', code))
 
 db.commit()
 db.close()

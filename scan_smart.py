@@ -137,7 +137,15 @@ for catalog in catalog_name.keys():
             ''', (shop_catalog_id[0], _id, db_product.get('title'), db_product.get('price'),
                   db_product.get('unit'), db_product.get('value'), db_product.get('sale_badge'),
                   db_product.get('discount')))
+
+            product_id = cursor.lastrowid
+            cursor.execute('''
+                INSERT INTO price_history (product_id, data, price)
+                VALUES (?, ?, ?)
+            ''', (product_id, datetime.today().strftime('%Y-%m-%d'), _product[_id].get('price')))
+
             db.commit()
+
             logger.info(f"{_product[_id]['title']} - {_product[_id]['price']}")
 
         time.sleep(random() * 5 + 2)
