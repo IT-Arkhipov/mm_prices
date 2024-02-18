@@ -125,24 +125,25 @@ for catalog in catalog_name.keys():
             cursor.execute('''
                 SELECT shop_catalog_id
                 FROM shop_catalog
-                WHERE shop_id = (SELECT shop_id FROM shop WHERE code = ?)
-                AND catalog_id = (SELECT catalog_id FROM catalog WHERE code = ?)
+                WHERE shop_id = (SELECT shop_id FROM shop WHERE shop_id = ?)
+                AND catalog_id = (SELECT catalog_id FROM catalog WHERE catalog_id = ?)
             ''', ('108', catalog))
 
             shop_catalog_id = cursor.fetchone()
 
             cursor.execute('''
-            INSERT INTO product (shop_catalog_id, code, title, price, unit, value, sale_badge, discount)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?)
-            ''', (shop_catalog_id[0], _id, db_product.get('title'), db_product.get('price'),
+            INSERT INTO product (product_id, code, shop_catalog_id, title, price, unit, value, sale_badge, discount)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+            ''', (f"{_id}-{shop_catalog_id[0]}",  _id, shop_catalog_id[0], db_product.get('title'), db_product.get('price'),
                   db_product.get('unit'), db_product.get('value'), db_product.get('sale_badge'),
                   db_product.get('discount')))
 
             product_id = cursor.lastrowid
             cursor.execute('''
-                INSERT INTO price_history (product_id, data, price)
-                VALUES (?, ?, ?)
-            ''', (product_id, datetime.today().strftime('%Y-%m-%d'), _product[_id].get('price')))
+                INSERT INTO price_history (price_history_id, date, product_id, price)
+                VALUES (?, ?, ?, ?)
+            ''', (f"{_id}_{datetime.today().strftime('%Y-%m-%d')}",
+                  datetime.today().strftime('%Y-%m-%d'), _id, _product[_id].get('price')))
 
             db.commit()
 

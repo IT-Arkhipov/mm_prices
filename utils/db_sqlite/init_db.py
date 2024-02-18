@@ -87,7 +87,7 @@ for code, title in category_name.items():
 
 cursor.execute('''
 CREATE TABLE shop_catalog (
-    shop_catalog_id INTEGER PRIMARY KEY AUTOINCREMENT,
+    shop_catalog_id TEXT PRIMARY KEY,
     shop_id TEXT,
     catalog_id TEXT,
     FOREIGN KEY (shop_id) REFERENCES shop(shop_id),
@@ -98,6 +98,7 @@ CREATE TABLE shop_catalog (
 cursor.execute('''
 CREATE TABLE product (
     product_id TEXT,
+    code TEXT,
     shop_catalog_id TEXT,
     title TEXT,
     price FLOAT,
@@ -105,17 +106,18 @@ CREATE TABLE product (
     value FLOAT,
     sale_badge BOOLEAN,
     discount FLOAT,
-    PRIMARY KEY (product_id, shop_catalog_id),
+    PRIMARY KEY (product_id),
     FOREIGN KEY (shop_catalog_id) REFERENCES shop_catalog(shop_catalog_id)
     )    
 ''')
 
 cursor.execute('''
 CREATE TABLE price_history (
-    price_date TEXT,
+    price_history_id TEXT,
+    date TEXT,
     product_id TEXT,
     price FLOAT,
-    PRIMARY KEY (price_date, product_id),
+    PRIMARY KEY (price_history_id),
     FOREIGN KEY (product_id) REFERENCES product(product_id)
     )    
 ''')
@@ -134,9 +136,9 @@ catalog_ids = cursor.fetchall()
 for shop_id in shop_ids:
     for catalog_id in catalog_ids:
         cursor.execute('''
-        INSERT INTO shop_catalog (shop_id, catalog_id)
-        VALUES (?, ?)
-        ''', (shop_id[0], catalog_id[0]))
+        INSERT INTO shop_catalog (shop_catalog_id, shop_id, catalog_id)
+        VALUES (?, ?, ?)
+        ''', (f"{shop_id[0]}-{catalog_id[0]}", shop_id[0], catalog_id[0]))
 
 
 cursor.execute('''
@@ -161,9 +163,9 @@ for code, title in catalog_name.items():
     # catalog_code = cursor.fetchone()
 
     cursor.execute('''
-    INSERT INTO shop_catalog (shop_id, catalog_id)
-    VALUES (?, ?)
-    ''', ('108', code))
+    INSERT INTO shop_catalog (shop_catalog_id, shop_id, catalog_id)
+    VALUES (?, ?, ?)
+    ''', (f"108-{code}", '108', code))
 
 db.commit()
 db.close()
