@@ -91,7 +91,7 @@ for catalog in catalog_name.keys():
                 logger.error(response.status_code)
                 print(response.status_code)
                 continue
-
+        response = requests.request('POST', url, json=payload, headers=headers, params=querystring)
         if not response.ok:
             logger.error(response.text)
             raise Exception
@@ -132,20 +132,18 @@ for catalog in catalog_name.keys():
             shop_catalog_id = cursor.fetchone()
 
             cursor.execute('''
-            INSERT INTO product (product_id, code, shop_catalog_id, title, price, unit, value, sale_badge, discount)
+            INSERT OR REPLACE INTO product (product_id, code, shop_catalog_id, title, price, unit, value, sale_badge, discount)
             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
-            ''', (f"{_id}-{shop_catalog_id[0]}",  _id, shop_catalog_id[0], db_product.get('title'), db_product.get('price'),
-                  db_product.get('unit'), db_product.get('value'), db_product.get('sale_badge'),
-                  db_product.get('discount')))
+            ''', (f"{_id}-{shop_catalog_id[0]}",  _id, shop_catalog_id[0], db_product.get('title'),
+                  db_product.get('price'), db_product.get('unit'), db_product.get('value'),
+                  db_product.get('sale_badge'), db_product.get('discount')))
 
             product_id = cursor.lastrowid
             cursor.execute('''
-                INSERT INTO price_history (price_history_id, date, product_id, price)
+                INSERT OR REPLACE INTO price_history (price_history_id, date, product_id, price)
                 VALUES (?, ?, ?, ?)
             ''', (f"{_id}_{datetime.today().strftime('%Y-%m-%d')}",
                   datetime.today().strftime('%Y-%m-%d'), _id, _product[_id].get('price')))
-
-            db.commit()
 
             logger.info(f"{_product[_id]['title']} - {_product[_id]['price']}")
 
@@ -153,8 +151,8 @@ for catalog in catalog_name.keys():
         page_number += 1
     time.sleep(random() * 6 + 3)
 
+db.commit()
 db.close()
 
 with open(f"shop_smart.json", 'w', encoding='utf-8') as file:
     json.dump(_shop_products, file, ensure_ascii=False)
-
