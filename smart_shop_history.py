@@ -35,5 +35,12 @@ for product, product_data in current_products.items():
     except KeyError:
         continue
 
-with open(f"products/catalog/shop_smart_history.json", 'w', encoding='utf-8') as file:
+with open(f"shop_smart_history.json", 'w', encoding='utf-8') as file:
     json.dump(products_history, file, ensure_ascii=False)
+
+
+# Calculate the date 10 days ago
+# ten_days_ago = datetime.now() - timedelta(days=10)
+
+# Filter out the entries later than 10 days ago
+# data["30685"]["price_history"] = {date: price for date, price in data["30685"]["price_history"].items() if datetime.fromisoformat(date) <= ten_days_ago}
