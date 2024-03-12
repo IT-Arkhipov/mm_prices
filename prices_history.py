@@ -30,7 +30,7 @@ for product, product_data in current_products.items():
         discount = round(((avg_price - curr_price) / avg_price) * 100)
         products_history[product]['price'] = curr_price
         products_history[product]['discount'] = discount
-        if discount > 0:
+        if discount > 20:
             p = products_history[product]
             shop_title = f"{shop_codes.get(p.get('shop')).get('brand')} - {shop_codes.get(p.get('shop')).get('address')}"
             if not prev_shop_title == shop_title:
