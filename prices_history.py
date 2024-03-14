@@ -1,5 +1,6 @@
 import json
 import os
+from datetime import datetime, timedelta
 
 from products.declaration import shop_codes
 
@@ -9,6 +10,8 @@ with open('products_history.json', 'r', encoding='utf-8') as f:
 
 with open('current_products.json', 'r', encoding='utf-8') as f:
     current_products = json.load(f)
+
+days_ago_str = (datetime.now() - timedelta(days=7)).strftime('%Y-%m-%d')
 
 discount_prices = {'333619': [], '333646': [], '333642': [], '289029': [], '289028': []}
 prev_shop_title = ''
@@ -30,6 +33,8 @@ for product, product_data in current_products.items():
         discount = round(((avg_price - curr_price) / avg_price) * 100)
         products_history[product]['price'] = curr_price
         products_history[product]['discount'] = discount
+        products_history[product]['price_history'] = {
+            date: price for date, price in products_history[product]['price_history'].items() if date >= days_ago_str}
         if discount > 20:
             p = products_history[product]
             shop_title = f"{shop_codes.get(p.get('shop')).get('brand')} - {shop_codes.get(p.get('shop')).get('address')}"

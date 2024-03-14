@@ -29,7 +29,8 @@ for product, product_data in current_products.items():
         discount = round(((avg_price - curr_price) / avg_price) * 100)
         products_history[product]['price'] = curr_price
         products_history[product]['discount'] = discount
-        products_history[product]['price_history'] = {date: price for date, price in products_history[product]['price_history'].items() if date >= days_ago_str}
+        products_history[product]['price_history'] = {
+            date: price for date, price in products_history[product]['price_history'].items() if date >= days_ago_str}
 
         if discount > 0:
             p = products_history[product]
