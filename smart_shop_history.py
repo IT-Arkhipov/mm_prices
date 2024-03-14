@@ -1,6 +1,6 @@
 import json
 import os
-
+from datetime import datetime, timedelta
 
 with open('shop_smart_history.json', 'r', encoding='utf-8') as f:
     products_history = json.load(f)
@@ -9,6 +9,7 @@ with open('shop_smart_history.json', 'r', encoding='utf-8') as f:
 with open('shop_smart.json', 'r', encoding='utf-8') as f:
     current_products = json.load(f)
 
+days_ago_str = (datetime.now() - timedelta(days=7)).strftime('%Y-%m-%d')
 
 for product, product_data in current_products.items():
     try:
@@ -28,6 +29,8 @@ for product, product_data in current_products.items():
         discount = round(((avg_price - curr_price) / avg_price) * 100)
         products_history[product]['price'] = curr_price
         products_history[product]['discount'] = discount
+        products_history[product]['price_history'] = {date: price for date, price in products_history[product]['price_history'].items() if date >= days_ago_str}
+
         if discount > 0:
             p = products_history[product]
             print(f"{p.get('title')} ({p.get('discount')}%)- {p.get('price')} руб.: "
@@ -41,6 +44,6 @@ with open(f"shop_smart_history.json", 'w', encoding='utf-8') as file:
 
 # Calculate the date 10 days ago
 # ten_days_ago = datetime.now() - timedelta(days=10)
-
+#
 # Filter out the entries later than 10 days ago
 # data["30685"]["price_history"] = {date: price for date, price in data["30685"]["price_history"].items() if datetime.fromisoformat(date) <= ten_days_ago}
