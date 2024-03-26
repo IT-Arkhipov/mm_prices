@@ -35,7 +35,7 @@ for product, product_data in current_products.items():
         products_history[product]['discount'] = discount
         products_history[product]['price_history'] = {
             date: price for date, price in products_history[product]['price_history'].items() if date >= days_ago_str}
-        if discount > 15:
+        if discount > 5:
             p = products_history[product]
             shop_title = f"{shop_codes.get(p.get('shop')).get('brand')} - {shop_codes.get(p.get('shop')).get('address')}"
             if not prev_shop_title == shop_title:
