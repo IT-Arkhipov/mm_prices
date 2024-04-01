@@ -32,7 +32,7 @@ for product, product_data in current_products.items():
         products_history[product]['price_history'] = {
             date: price for date, price in products_history[product]['price_history'].items() if date >= days_ago_str}
 
-        if discount > 0:
+        if discount > 10:
             p = products_history[product]
             print(f"{p.get('title')} ({p.get('discount')}%)- {p.get('price')} руб.: "
                   f"{[price for date, price in p.get('price_history').items()]}")
