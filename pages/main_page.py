@@ -72,7 +72,7 @@ def init_browser(gui: bool = True):
 
 
 def open_page():
-    browser.open('https://megamarket.ru')
+    browser.open('https://megamarket.ru/catalog/cnc/')
     # browser.config.driver.save_screenshot(f"{datetime.now().strftime('%H_%M_%S')}.jpg")
     waiting = 2
 

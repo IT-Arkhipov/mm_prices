@@ -14,7 +14,7 @@ from utils.config import logger
 
 
 def config_browser(gui: bool = True):
-    browser.config.base_url = 'https://megamarket.ru/'
+    browser.config.base_url = 'https://megamarket.ru/catalog/cnc/'
     browser.config.timeout = 10
 
     if gui:
